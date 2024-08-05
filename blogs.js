@@ -1,7 +1,3 @@
-function findTitlesPublishedOn(date, blogPostTitles) {
-  //It should return all blog posts titles that were published on a specified date using binary search
-}
-
 const blogPostTitles = [
   {
     title: "Mastering the Art of Ramen: A Beginner's Guide",
@@ -191,3 +187,51 @@ const blogPostTitles = [
     published_on: "2026-12-01T12:00:00Z",
   },
 ];
+function findTitlesPublishedOn(date, blogPostTitles) {
+  //It should return all blog posts titles that were published on a specified date using binary search
+
+  blogPostTitles.sort(
+    (a, b) => new Date(a.published_on) - new Date(b.published_on)
+  );
+
+  const targetDate = new Date(date).toISOString().split("T")[0];
+
+  let left = 0;
+  let right = blogPostTitles.length - 1;
+  let firstIndex = -1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midDate = new Date(blogPostTitles[mid].published_on)
+      .toISOString()
+      .split("T")[0];
+
+    if (midDate === targetDate) {
+      firstIndex = mid;
+      right = mid - 1; // Continue searching in the left half
+    } else if (midDate < targetDate) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  const result = [];
+  if (firstIndex !== -1) {
+    for (let i = firstIndex; i < blogPostTitles.length; i++) {
+      const currentDate = new Date(blogPostTitles[i].published_on)
+        .toISOString()
+        .split("T")[0];
+      if (currentDate === targetDate) {
+        result.push(blogPostTitles[i].title);
+      } else {
+        break;
+      }
+    }
+  }
+
+  return result;
+}
+
+const date = "2023-01-15";
+console.log(findTitlesPublishedOn(date, blogPostTitles));
